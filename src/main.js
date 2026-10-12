@@ -43,6 +43,47 @@ const motionInput = document.querySelector('#motion-value');
 const motionOutput = document.querySelector('#motion-output');
 const status = document.querySelector('#status');
 let activeDimensions = { ...activeAsset.defaults };
+let pendingPreview = 0;
+const numericKeys = ['width', 'height', 'depth', 'partCount'];
+
+function syncNumericSliders() {
+  for (const key of numericKeys) {
+    const number = form.elements[key];
+    const slider = document.querySelector(`#${key}-slider`);
+    slider.min = number.min;
+    slider.max = number.max;
+    slider.step = key === 'partCount' ? '1' : '0.001';
+    slider.disabled = number.disabled || number.readOnly;
+    slider.value = number.value;
+    document.querySelector(`#${key}-min`).textContent = number.min;
+    document.querySelector(`#${key}-max`).textContent = number.max;
+  }
+}
+
+function readModelOptions() {
+  const values = new FormData(form);
+  const options = {
+    width: Number(values.get('width')), height: Number(values.get('height')),
+    depth: Number(values.get('depth')), bodyColor: values.get('bodyColor'),
+  };
+  if (activeAsset.count) options[activeAsset.count.key] = Number(values.get('partCount'));
+  return options;
+}
+
+function schedulePreview() {
+  if (pendingPreview) return;
+  // 드래그 이벤트를 프레임당 한 번으로 묶어 Geometry 생성과 해제 횟수를 줄인다.
+  pendingPreview = requestAnimationFrame(() => {
+    pendingPreview = 0;
+    if (!form.checkValidity()) return;
+    try {
+      rebuildModel(readModelOptions(), { reframe: false });
+      status.textContent = '수치를 미리보기에 반영했습니다.';
+    } catch (error) {
+      status.textContent = `설정 적용 실패: ${error.message}`;
+    }
+  });
+}
 
 function setModelMotion() {
   if (!model) return;
@@ -52,6 +93,8 @@ function setModelMotion() {
 }
 
 function selectAsset(asset) {
+  cancelAnimationFrame(pendingPreview);
+  pendingPreview = 0;
   activeAsset = asset;
   document.querySelectorAll('[data-asset]').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.asset === asset.id));
@@ -78,6 +121,8 @@ function selectAsset(asset) {
     document.querySelector('#count-label').textContent = asset.count.label;
     Object.assign(countInput, { min: asset.count.min, max: asset.count.max, value: asset.defaults[asset.count.key] });
   }
+  syncNumericSliders();
+  document.querySelector('#partCount-slider').setAttribute('aria-label', `${asset.count?.label ?? '부품 개수'} 슬라이더`);
   document.querySelector('#motion-setting').hidden = !asset.motion;
   motionInput.disabled = !asset.motion;
   motionInput.value = '0';
@@ -114,7 +159,7 @@ function setView(view = 'perspective') {
   });
 }
 
-function rebuildModel(options) {
+function rebuildModel(options, { reframe = true } = {}) {
   const replacement = activeAsset.create(options);
   if (model) {
     scene.remove(model);
@@ -125,21 +170,17 @@ function rebuildModel(options) {
   scene.add(model);
   activeDimensions = { ...options };
   setModelMotion();
-  setView();
+  if (reframe) setView();
   const { width, height, depth } = activeDimensions;
   document.querySelector('#dimensions').textContent = `${width.toFixed(2)} × ${height.toFixed(2)} × ${depth.toFixed(2)} m`;
 }
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  const values = new FormData(form);
+  cancelAnimationFrame(pendingPreview);
+  pendingPreview = 0;
   try {
-    const options = {
-      width: Number(values.get('width')), height: Number(values.get('height')),
-      depth: Number(values.get('depth')), bodyColor: values.get('bodyColor'),
-    };
-    if (activeAsset.count) options[activeAsset.count.key] = Number(values.get('partCount'));
-    rebuildModel(options);
+    rebuildModel(readModelOptions());
     status.textContent = '모델 설정을 적용했습니다.';
   } catch (error) {
     status.textContent = `설정 적용 실패: ${error.message}`;
@@ -207,8 +248,19 @@ function renderAssetList() {
   document.querySelector('#empty-list').hidden = matches.length > 0;
 }
 search.addEventListener('input', renderAssetList);
-form.elements.width.addEventListener('input', () => {
-  if (activeAsset.lockDiameter) form.elements.depth.value = form.elements.width.value;
-});
+for (const key of numericKeys) {
+  const number = form.elements[key];
+  const slider = document.querySelector(`#${key}-slider`);
+  const onInput = () => {
+    if (key === 'width' && activeAsset.lockDiameter) form.elements.depth.value = number.value;
+    if (number.value !== '' && number.validity.valid) syncNumericSliders();
+    schedulePreview();
+  };
+  number.addEventListener('input', onInput);
+  slider.addEventListener('input', () => {
+    number.value = slider.value;
+    onInput();
+  });
+}
 renderAssetList();
 selectAsset(activeAsset);

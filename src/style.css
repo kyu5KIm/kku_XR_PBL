@@ -54,3 +54,7 @@ h3 { font-size: 13px; font-weight: 600; margin: 0 0 12px; }.view-buttons { displ
 #asset-list button[aria-pressed=true] small { color: #647c59; } input[readonly] { opacity: 0.6; }
 @media (min-width: 761px) and (max-width: 1100px) { main { grid-template-columns: 190px minmax(0, 1fr); } aside { grid-column: 1 / -1; border-top: 1px solid #d9dfd7; border-left: 0; } .viewport-title { left: 20px; } h1 { font-size: 24px; } }
 @media (max-width: 760px) { main { grid-template-columns: 1fr; } .asset-library { border-right: 0; border-bottom: 1px solid #d9dfd7; padding: 20px; } #asset-list { grid-template-columns: 1fr 1fr; max-height: 240px; min-height: 0; } .viewport { min-height: 520px; } }
+
+.numeric-setting { margin-bottom: 16px; }
+.numeric-setting input[type=range] { margin: 5px 0 4px; }
+.numeric-setting input[type=range]:disabled { opacity: 0.4; cursor: not-allowed; }
