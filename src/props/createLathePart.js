@@ -16,6 +16,8 @@ export function createLathePart(options = {}) {
     [0.55, 0.24], [0.55, 0.7], [0.4, 0.7], [0.4, 0.84], [0.25, 0.84], [0.25, 1], [0, 1],
   ].map(([r, y]) => new THREE.Vector2(r * radius, y * h));
   materials.steelLight.color.set(config.bodyColor);
-  mesh(root, 'LathedSteppedShaft', new THREE.LatheGeometry(profile, 32), materials.steelLight, [0, 0, 0]);
+  const geometry = new THREE.LatheGeometry(profile, 32);
+  geometry.normalizeNormals();
+  mesh(root, 'LathedSteppedShaft', geometry, materials.steelLight, [0, 0, 0]);
   return root;
 }

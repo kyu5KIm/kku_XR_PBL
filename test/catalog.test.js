@@ -45,20 +45,40 @@ class BlobFileReader {
   }
 }
 
-test('catalog covers all twelve requested production targets', () => {
-  assert.equal(assetCatalog.length, 12);
-  assert.equal(new Set(assetCatalog.map(asset => asset.id)).size, 12);
-  assert.deepEqual(assetCatalog.map(asset => asset.label), [
-    '산업용 작업대', '공구함', '철제 캐비닛', '드럼통', '파이프 및 밸브', '전기 제어반',
-    '안전 펜스', '팔레트', '컨베이어', '산업용 랙', '기계 설비 외형', '공장 내부 장식용 Prop',
+test('catalog covers the sixteen requested parts and five retained assets', () => {
+  assert.equal(assetCatalog.length, 21);
+  assert.equal(new Set(assetCatalog.map(asset => asset.id)).size, 21);
+  assert.deepEqual(assetCatalog.slice(0, 16).map(asset => asset.label), [
+    '산업용 작업대', '철제 캐비닛', '파이프', '밸브', '드럼통', '소화기', '가스통',
+    '안전 펜스', '팔레트', '공구함', '배전함', '컨베이어', '산업용 램프',
+    '저장 탱크', 'I-Beam', '회전대칭 부품',
   ]);
 });
 
+const requiredGeometries = {
+  workbench: ['BoxGeometry'], 'steel-cabinet': ['BoxGeometry'], pipe: ['CylinderGeometry'],
+  valve: ['CylinderGeometry', 'TorusGeometry'], barrel: ['CylinderGeometry'],
+  'fire-extinguisher': ['CylinderGeometry', 'SphereGeometry'], 'gas-cylinder': ['CylinderGeometry', 'SphereGeometry'],
+  'safety-fence': ['BoxGeometry'], pallet: ['BoxGeometry'], toolbox: ['BoxGeometry'],
+  'distribution-box': ['BoxGeometry', 'ExtrudeGeometry'], conveyor: ['BoxGeometry', 'CylinderGeometry'],
+  'industrial-lamp': ['CylinderGeometry', 'ConeGeometry'], 'storage-tank': ['CylinderGeometry', 'SphereGeometry'],
+  'i-beam': ['ExtrudeGeometry'], 'lathe-part': ['LatheGeometry'],
+};
+
 for (const asset of assetCatalog) {
+  if (requiredGeometries[asset.id]) {
+    test(`${asset.id}: uses the requested Three.js modeling primitives`, () => {
+      const model = asset.create();
+      const actualTypes = new Set();
+      model.traverse(child => { if (child.geometry) actualTypes.add(child.geometry.type); });
+      for (const type of requiredGeometries[asset.id]) assert.ok(actualTypes.has(type), `Missing ${type}`);
+      disposeObject(model);
+    });
+  }
   test(`${asset.id}: default and asymmetric parameter changes preserve envelope and floor origin`, () => {
     for (const dimensions of [asset.defaults, {
       ...asset.defaults, width: asset.defaults.width * 1.15,
-      height: asset.defaults.height * 0.9, depth: asset.defaults.depth * 1.1,
+      height: asset.defaults.height * 0.9, depth: asset.defaults.depth * (asset.lockDiameter ? 1.15 : 1.1),
     }]) {
       const model = asset.create(dimensions);
       checkModel(model, dimensions);
@@ -135,3 +155,8 @@ for (const asset of assetCatalog) {
     }
   });
 }
+
+test('lathed shaft enforces equal diameters for true rotational symmetry', () => {
+  const asset = assetCatalog.find(asset => asset.id === 'lathe-part');
+  assert.throws(() => asset.create({ width: 0.4, depth: 0.3 }), RangeError);
+});

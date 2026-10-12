@@ -1,0 +1,342 @@
+[
+  {
+    "id": "workbench",
+    "label": "산업용 작업대",
+    "description": "목재 상판 · 철제 프레임 · 하부 선반",
+    "geometry": "BoxGeometry",
+    "file": "workbench.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 1.8,
+      "height": 0.9,
+      "depth": 0.75,
+      "bodyColor": "#446a78"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "steel-cabinet",
+    "label": "철제 캐비닛",
+    "description": "양문 수납장 · 내부 선반 · 힌지 도어",
+    "geometry": "Box + Box",
+    "file": "steel-cabinet.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.9,
+      "height": 1.8,
+      "depth": 0.45,
+      "bodyColor": "#788797"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "pipe",
+    "label": "파이프",
+    "description": "독립 배관 · 양단 플랜지 · 체결 볼트",
+    "geometry": "CylinderGeometry",
+    "file": "pipe.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 1.5,
+      "height": 0.32,
+      "depth": 0.32,
+      "bodyColor": "#839a9e"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "valve",
+    "label": "밸브",
+    "description": "유로 몸체 · 접속 플랜지 · 핸드휠",
+    "geometry": "Cylinder + Torus",
+    "file": "valve.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.42,
+      "height": 0.55,
+      "depth": 0.32,
+      "bodyColor": "#497e78"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "barrel",
+    "label": "드럼통",
+    "description": "원통 몸체 · 보강 링 · 주입구",
+    "geometry": "Cylinder",
+    "file": "barrel.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.58,
+      "height": 0.88,
+      "depth": 0.58,
+      "bodyColor": "#476f8b"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "fire-extinguisher",
+    "label": "소화기",
+    "description": "둥근 용기 · 손잡이 · 압력계 · 방출 호스",
+    "geometry": "Cylinder + Sphere",
+    "file": "fire-extinguisher.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.2,
+      "height": 0.58,
+      "depth": 0.2,
+      "bodyColor": "#c84337"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "gas-cylinder",
+    "label": "가스통",
+    "description": "둥근 고압 용기 · 밸브 · 보호 가드",
+    "geometry": "Cylinder + Sphere",
+    "file": "gas-cylinder.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.3,
+      "height": 1.4,
+      "depth": 0.3,
+      "bodyColor": "#597781"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "safety-fence",
+    "label": "안전 펜스",
+    "description": "철제 기둥 · 와이어 메시 · 고정 받침",
+    "geometry": "Box 반복",
+    "file": "safety-fence.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 2,
+      "height": 1.8,
+      "depth": 0.35,
+      "bodyColor": "#dab74c"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "pallet",
+    "label": "팔레트",
+    "description": "목재 상판 · 지지 블록 · 하부 러너",
+    "geometry": "Box 반복",
+    "file": "pallet.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 1.2,
+      "height": 0.15,
+      "depth": 1,
+      "bodyColor": "#b98c55",
+      "boardCount": 5
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "toolbox",
+    "label": "공구함",
+    "description": "이동식 공구함 · 다단 서랍 · 캐스터",
+    "geometry": "Box",
+    "file": "toolbox.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.8,
+      "height": 0.95,
+      "depth": 0.5,
+      "bodyColor": "#a64c42",
+      "drawerCount": 5
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "distribution-box",
+    "label": "배전함",
+    "description": "돌출 성형 외함 · 힌지 도어 · 차단기",
+    "geometry": "Box + Extrude",
+    "file": "distribution-box.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.6,
+      "height": 0.8,
+      "depth": 0.24,
+      "bodyColor": "#a2aaa2"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "conveyor",
+    "label": "컨베이어",
+    "description": "롤러 · 측면 레일 · 구동부 · 지지 프레임",
+    "geometry": "Box + Cylinder",
+    "file": "conveyor.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 2.4,
+      "height": 0.85,
+      "depth": 0.7,
+      "bodyColor": "#527c89",
+      "rollerCount": 16
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "industrial-lamp",
+    "label": "산업용 램프",
+    "description": "스탠드 · 원뿔형 갓 · 발광 확산판",
+    "geometry": "Cylinder + Cone",
+    "file": "industrial-lamp.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.5,
+      "height": 1.6,
+      "depth": 0.5,
+      "bodyColor": "#497770"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "storage-tank",
+    "label": "저장 탱크",
+    "description": "원통 쉘 · 둥근 경판 · 지지 다리 · 배출구",
+    "geometry": "Cylinder + Sphere",
+    "file": "storage-tank.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 1.4,
+      "height": 2.2,
+      "depth": 1.4,
+      "bodyColor": "#819a9e"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "i-beam",
+    "label": "I-Beam",
+    "description": "I형 단면을 길이 방향으로 돌출한 철골 부재",
+    "geometry": "ExtrudeGeometry",
+    "file": "i-beam.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.2,
+      "height": 0.3,
+      "depth": 2.5,
+      "bodyColor": "#697b82"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "lathe-part",
+    "label": "회전대칭 부품",
+    "description": "프로파일을 Y축으로 회전한 단차 가공 축",
+    "geometry": "LatheGeometry",
+    "file": "lathe-part.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 0.28,
+      "height": 0.6,
+      "depth": 0.28,
+      "bodyColor": "#9ba5a8"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "electrical-cabinet",
+    "label": "전기 제어반",
+    "description": "도어 · 환기구 · 3단 상태등",
+    "geometry": "Box + Cylinder",
+    "file": "electrical-cabinet.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 1.2,
+      "height": 2,
+      "depth": 0.4,
+      "bodyColor": "#657d75"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "pipe-valve",
+    "label": "파이프 및 밸브",
+    "description": "플랜지 배관 · 지지대 · 핸드휠 밸브",
+    "geometry": "Cylinder + Torus",
+    "file": "pipe-valve.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 1.5,
+      "height": 0.9,
+      "depth": 0.45,
+      "bodyColor": "#5e8189"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "industrial-rack",
+    "label": "산업용 랙",
+    "description": "철제 기둥 · 크로스 빔 · 다단 선반",
+    "geometry": "Box 반복",
+    "file": "industrial-rack.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 2.2,
+      "height": 2.4,
+      "depth": 0.8,
+      "bodyColor": "#376780",
+      "shelfCount": 4
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "machine-enclosure",
+    "label": "기계 설비 외형",
+    "description": "가공기 외함 · 슬라이딩 도어 · 작업 베드",
+    "geometry": "Box + Cylinder",
+    "file": "machine-enclosure.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 2,
+      "height": 1.9,
+      "depth": 1.1,
+      "bodyColor": "#70938b"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  },
+  {
+    "id": "factory-decor",
+    "label": "공장 내부 장식용 Prop",
+    "description": "폐기물함 · 개폐식 덮개 · 안전 콘",
+    "geometry": "Box + Cylinder",
+    "file": "factory-decor.glb",
+    "units": "meters",
+    "defaults": {
+      "width": 1.1,
+      "height": 0.9,
+      "depth": 0.55,
+      "bodyColor": "#476b59"
+    },
+    "origin": "bottom-center",
+    "assumption": "Example dimensions, not certified industrial specifications"
+  }
+]
