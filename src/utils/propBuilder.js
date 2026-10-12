@@ -79,5 +79,5 @@ export function createPropBuilder(name, category, defaults, options = {}) {
     parent.add(instances);
     return instances;
   };
-  return { root, config, materials, group, box, cylinder, torus, repeatedBoxes };
+  return { root, config, materials, group, mesh, box, cylinder, torus, repeatedBoxes };
 }
