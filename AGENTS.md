@@ -1388,3 +1388,5 @@ Parameterized Asset Generator
 ```
 
 방식을 우선한다.
+
+ - 직접 Webbrowser를 띄워서 테스트하지는 말아줘. 내가 직접 테스트 할게.ㄴ

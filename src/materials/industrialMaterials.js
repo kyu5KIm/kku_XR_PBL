@@ -7,6 +7,7 @@ export function createIndustrialMaterials(bodyColor = '#657d75') {
     return material;
   };
   return {
+    wood: standard('PalletWood', { color: 0xb98c55, metalness: 0, roughness: 0.85 }),
     paintedSteel: standard('PaintedSteel', { color: bodyColor, metalness: 0.45, roughness: 0.5 }),
     steelLight: standard('SteelLight', { color: 0xbac2bf, metalness: 0.8, roughness: 0.35 }),
     steelDark: standard('SteelDark', { color: 0x35403e, metalness: 0.8, roughness: 0.5 }),
