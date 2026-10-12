@@ -14,6 +14,7 @@ const canvas = document.querySelector('#scene');
 const scene = createScene();
 let activeAsset = assetCatalog[0];
 let model;
+let activeView = 'perspective';
 const camera = createCamera();
 const renderer = createRenderer(canvas);
 const controls = new OrbitControls(camera, canvas);
@@ -29,6 +30,7 @@ new ResizeObserver(() => {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height, false);
+  if (model) setView(activeView);
 }).observe(canvas.parentElement);
 
 renderer.setAnimationLoop(() => {
@@ -51,6 +53,10 @@ function setModelMotion() {
 
 function selectAsset(asset) {
   activeAsset = asset;
+  document.querySelectorAll('[data-asset]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.asset === asset.id));
+  });
+  document.querySelector('#geometry-description').textContent = asset.geometryLabel;
   document.querySelector('h1').textContent = asset.label;
   document.querySelector('#asset-description').textContent = asset.description;
   document.querySelector('#asset-name').textContent = asset.id;
@@ -62,6 +68,8 @@ function selectAsset(asset) {
     input.step = 'any';
     input.value = asset.defaults[key];
   }
+  form.elements.depth.readOnly = Boolean(asset.lockDiameter);
+  form.elements.depth.title = asset.lockDiameter ? '회전대칭 유지를 위해 너비와 같은 지름으로 연동됩니다.' : '';
   form.elements.bodyColor.value = asset.defaults.bodyColor;
   const countInput = form.elements.partCount;
   document.querySelector('#count-setting').hidden = !asset.count;
@@ -80,6 +88,7 @@ function selectAsset(asset) {
 }
 
 function setView(view = 'perspective') {
+  activeView = view;
   const { width, height, depth } = activeDimensions;
   const target = new THREE.Vector3(0, height / 2, 0);
   // 화면 비율과 전체 외곽 치수를 기준으로 모든 소품이 시야에 들어오게 한다.
@@ -152,8 +161,8 @@ document.querySelector('#export').addEventListener('click', async (event) => {
   button.disabled = true;
   status.textContent = 'GLB 파일을 준비하고 있습니다…';
   try {
-    const { GLTFExporter } = await import('three/addons/exporters/GLTFExporter.js');
     const exported = prepareModelForExport(model);
+    const { GLTFExporter } = await import('three/addons/exporters/GLTFExporter.js');
     const data = await new GLTFExporter().parseAsync(exported, { binary: true });
     const url = URL.createObjectURL(new Blob([data], { type: 'model/gltf-binary' }));
     const link = document.createElement('a');
@@ -170,15 +179,36 @@ document.querySelector('#export').addEventListener('click', async (event) => {
   }
 });
 
-const selector = document.querySelector('#asset-select');
-for (const asset of assetCatalog) {
-  const option = document.createElement('option');
-  option.value = asset.id;
-  option.textContent = asset.label;
-  selector.appendChild(option);
+const list = document.querySelector('#asset-list');
+const search = document.querySelector('#asset-search');
+function renderAssetList() {
+  const query = search.value.trim().toLocaleLowerCase();
+  const matches = assetCatalog.filter(asset => `${asset.label} ${asset.id} ${asset.description} ${asset.geometryLabel}`.toLocaleLowerCase().includes(query));
+  list.replaceChildren();
+  for (const asset of matches) {
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.asset = asset.id;
+    button.setAttribute('aria-pressed', String(asset.id === activeAsset.id));
+    const title = document.createElement('strong');
+    title.textContent = asset.label;
+    const geometry = document.createElement('small');
+    geometry.textContent = asset.geometryLabel;
+    button.append(title, geometry);
+    button.addEventListener('click', () => {
+      selectAsset(asset);
+      status.textContent = `${asset.label} 모델을 선택했습니다.`;
+    });
+    item.appendChild(button);
+    list.appendChild(item);
+  }
+  document.querySelector('#asset-count').textContent = `${matches.length} / ${assetCatalog.length}`;
+  document.querySelector('#empty-list').hidden = matches.length > 0;
 }
-selector.addEventListener('change', () => {
-  selectAsset(assetCatalog.find(asset => asset.id === selector.value));
-  status.textContent = `${activeAsset.label} 모델을 선택했습니다.`;
+search.addEventListener('input', renderAssetList);
+form.elements.width.addEventListener('input', () => {
+  if (activeAsset.lockDiameter) form.elements.depth.value = form.elements.width.value;
 });
+renderAssetList();
 selectAsset(activeAsset);

@@ -4,6 +4,7 @@ export function applyModelInteraction(id, model, value) {
   const angle = MathUtils.degToRad(value);
   const { width, depth } = model.userData.dimensions;
   switch (id) {
+    case 'distribution-box':
     case 'electrical-cabinet':
       model.getObjectByName('DoorPivot').rotation.y = -angle;
       break;
@@ -14,6 +15,7 @@ export function applyModelInteraction(id, model, value) {
     case 'toolbox':
       model.children.filter(child => /^Drawer\d+$/.test(child.name)).forEach(drawer => { drawer.position.z = depth * 0.65 * value / 100; });
       break;
+    case 'valve':
     case 'pipe-valve':
       model.getObjectByName('ValveHandle').rotation.y = angle;
       break;
