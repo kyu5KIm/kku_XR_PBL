@@ -1,4 +1,5 @@
 import './style.css';
+import { createIndustrialCabinet } from './props/createIndustrialCabinet.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createScene } from './core/scene.js';
 import { createCamera } from './core/camera.js';
@@ -7,6 +8,8 @@ import { sceneConfig } from './config/sceneConfig.js';
 
 const canvas = document.querySelector('#scene');
 const scene = createScene();
+const cabinet = createIndustrialCabinet();
+scene.add(cabinet);
 const camera = createCamera();
 const renderer = createRenderer(canvas);
 const controls = new OrbitControls(camera, canvas);
