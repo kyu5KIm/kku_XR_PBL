@@ -2,7 +2,8 @@ import './style.css';
 import { prepareModelForExport } from './utils/exportModel.js';
 import { disposeObject } from './utils/disposeObject.js';
 import * as THREE from 'three';
-import { cabinetDefaults, createIndustrialCabinet } from './props/createIndustrialCabinet.js';
+import { assetCatalog } from './config/assetCatalog.js';
+import { applyModelInteraction } from './utils/modelInteraction.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createScene } from './core/scene.js';
 import { createCamera } from './core/camera.js';
@@ -11,8 +12,8 @@ import { sceneConfig } from './config/sceneConfig.js';
 
 const canvas = document.querySelector('#scene');
 const scene = createScene();
-let cabinet = createIndustrialCabinet();
-scene.add(cabinet);
+let activeAsset = assetCatalog[0];
+let model;
 const camera = createCamera();
 const renderer = createRenderer(canvas);
 const controls = new OrbitControls(camera, canvas);
@@ -36,22 +37,58 @@ renderer.setAnimationLoop(() => {
 });
 
 const form = document.querySelector('#model-form');
-const doorAngle = document.querySelector('#door-angle');
-const doorValue = document.querySelector('#door-value');
+const motionInput = document.querySelector('#motion-value');
+const motionOutput = document.querySelector('#motion-output');
 const status = document.querySelector('#status');
-let activeDimensions = { ...cabinetDefaults };
+let activeDimensions = { ...activeAsset.defaults };
 
-function setDoorAngle() {
-  const angle = Number(doorAngle.value);
-  cabinet.getObjectByName('DoorPivot').rotation.y = -THREE.MathUtils.degToRad(angle);
-  doorValue.value = `${angle}°`;
+function setModelMotion() {
+  if (!model) return;
+  const value = Number(motionInput.value);
+  applyModelInteraction(activeAsset.id, model, value);
+  motionOutput.value = `${value}${activeAsset.motion?.unit ?? ''}`;
+}
+
+function selectAsset(asset) {
+  activeAsset = asset;
+  document.querySelector('h1').textContent = asset.label;
+  document.querySelector('#asset-description').textContent = asset.description;
+  document.querySelector('#asset-name').textContent = asset.id;
+  document.querySelector('#asset-number').textContent = String(assetCatalog.indexOf(asset) + 1).padStart(3, '0');
+  for (const key of ['width', 'height', 'depth']) {
+    const input = form.elements[key];
+    input.min = (asset.defaults[key] * 0.5).toFixed(3);
+    input.max = (asset.defaults[key] * 2).toFixed(3);
+    input.step = 'any';
+    input.value = asset.defaults[key];
+  }
+  form.elements.bodyColor.value = asset.defaults.bodyColor;
+  const countInput = form.elements.partCount;
+  document.querySelector('#count-setting').hidden = !asset.count;
+  countInput.disabled = !asset.count;
+  if (asset.count) {
+    document.querySelector('#count-label').textContent = asset.count.label;
+    Object.assign(countInput, { min: asset.count.min, max: asset.count.max, value: asset.defaults[asset.count.key] });
+  }
+  document.querySelector('#motion-setting').hidden = !asset.motion;
+  motionInput.disabled = !asset.motion;
+  motionInput.value = '0';
+  motionInput.max = asset.motion?.max ?? 100;
+  document.querySelector('#motion-label').textContent = asset.motion?.label ?? '조작';
+  document.querySelector('#motion-end').textContent = `${asset.motion?.max ?? 0}${asset.motion?.unit ?? ''}`;
+  rebuildModel(asset.defaults);
 }
 
 function setView(view = 'perspective') {
   const { width, height, depth } = activeDimensions;
   const target = new THREE.Vector3(0, height / 2, 0);
-  // 도어를 열어도 전체 모델이 보이도록 닫힘 외곽 치수에 여유를 둔다.
-  const distance = Math.max(width, height, depth) * 2.2;
+  // 화면 비율과 전체 외곽 치수를 기준으로 모든 소품이 시야에 들어오게 한다.
+  const aspect = Math.max(camera.aspect, 0.1);
+  const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+  const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * aspect);
+  const radius = Math.hypot(width, height, depth) / 2;
+  const distance = radius / Math.sin(Math.min(verticalFov, horizontalFov) / 2) * 1.3;
+  controls.maxDistance = Math.max(15, distance * 3);
   const directions = {
     front: [0, 0, 1], back: [0, 0, -1], left: [-1, 0, 0],
     right: [1, 0, 0], top: [0, 1, 0.001], perspective: [1, 0.65, 1.4],
@@ -69,13 +106,16 @@ function setView(view = 'perspective') {
 }
 
 function rebuildModel(options) {
-  const replacement = createIndustrialCabinet(options);
-  scene.remove(cabinet);
-  disposeObject(cabinet);
-  cabinet = replacement;
-  scene.add(cabinet);
+  const replacement = activeAsset.create(options);
+  if (model) {
+    scene.remove(model);
+    disposeObject(model);
+  }
+  model = replacement;
+  model.userData.assetName = activeAsset.id;
+  scene.add(model);
   activeDimensions = { ...options };
-  setDoorAngle();
+  setModelMotion();
   setView();
   const { width, height, depth } = activeDimensions;
   document.querySelector('#dimensions').textContent = `${width.toFixed(2)} × ${height.toFixed(2)} × ${depth.toFixed(2)} m`;
@@ -85,16 +125,18 @@ form.addEventListener('submit', (event) => {
   event.preventDefault();
   const values = new FormData(form);
   try {
-    rebuildModel({
+    const options = {
       width: Number(values.get('width')), height: Number(values.get('height')),
       depth: Number(values.get('depth')), bodyColor: values.get('bodyColor'),
-    });
+    };
+    if (activeAsset.count) options[activeAsset.count.key] = Number(values.get('partCount'));
+    rebuildModel(options);
     status.textContent = '모델 설정을 적용했습니다.';
   } catch (error) {
     status.textContent = `설정 적용 실패: ${error.message}`;
   }
 });
-doorAngle.addEventListener('input', setDoorAngle);
+motionInput.addEventListener('input', setModelMotion);
 document.querySelectorAll('[data-view]').forEach((button) => {
   button.addEventListener('click', () => setView(button.dataset.view));
 });
@@ -102,9 +144,7 @@ controls.addEventListener('start', () => {
   document.querySelectorAll('[data-view]').forEach((button) => button.setAttribute('aria-pressed', 'false'));
 });
 document.querySelector('#reset').addEventListener('click', () => {
-  form.reset();
-  doorAngle.value = '0';
-  rebuildModel(cabinetDefaults);
+  selectAsset(activeAsset);
   status.textContent = '기본 설정으로 복원했습니다.';
 });
 document.querySelector('#export').addEventListener('click', async (event) => {
@@ -113,12 +153,12 @@ document.querySelector('#export').addEventListener('click', async (event) => {
   status.textContent = 'GLB 파일을 준비하고 있습니다…';
   try {
     const { GLTFExporter } = await import('three/addons/exporters/GLTFExporter.js');
-    const exported = prepareModelForExport(cabinet);
+    const exported = prepareModelForExport(model);
     const data = await new GLTFExporter().parseAsync(exported, { binary: true });
     const url = URL.createObjectURL(new Blob([data], { type: 'model/gltf-binary' }));
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'industrial-cabinet.glb';
+    link.download = `${exported.userData.assetName}.glb`;
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     // clone은 원본 Geometry/Material을 공유한다. 여기서는 dispose하지 않는다.
@@ -130,4 +170,15 @@ document.querySelector('#export').addEventListener('click', async (event) => {
   }
 });
 
-rebuildModel(cabinetDefaults);
+const selector = document.querySelector('#asset-select');
+for (const asset of assetCatalog) {
+  const option = document.createElement('option');
+  option.value = asset.id;
+  option.textContent = asset.label;
+  selector.appendChild(option);
+}
+selector.addEventListener('change', () => {
+  selectAsset(assetCatalog.find(asset => asset.id === selector.value));
+  status.textContent = `${activeAsset.label} 모델을 선택했습니다.`;
+});
+selectAsset(activeAsset);

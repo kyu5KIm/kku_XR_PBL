@@ -38,3 +38,8 @@ h3 { font-size: 13px; font-weight: 600; margin: 0 0 12px; }.view-buttons { displ
 .view-buttons button[aria-pressed=true] { color: white; background: #526e5b; border-color: #526e5b; }
 .model-summary { margin: 24px 0; border-radius: 8px; background: #f0f3ea; padding: 16px; }.model-summary p { font-size: 11px; margin: 8px 0 0; } #dimensions { font-size: 14px; font-weight: 600; color: #425d4c; }
 .text-button { display: block; width: 100%; background: transparent; border: 0; color: #6a7d6f; font-size: 11px; padding: 14px; } #status { font-size: 11px; margin: 0; min-height: 18px; }
+
+[hidden] { display: none !important; }
+.catalog-label { margin-bottom: 10px; font-weight: 650; } .catalog-label span { font-size: 11px; color: #7c8b7d; font-weight: 400; }
+#asset-select { width: 100%; padding: 12px 10px; background: #f1f5ec; color: #2c4c40; border: 1px solid #cbd6c7; border-radius: 6px; margin-bottom: 14px; cursor: pointer; }
+#count-setting { margin: 0 0 20px; } #count-setting input { width: 100px; } .asset-label { overflow-wrap: anywhere; }

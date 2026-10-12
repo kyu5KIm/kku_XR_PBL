@@ -1,7 +1,7 @@
 export function createValve(builder, parent, { pipeY, pipeRadius, height, wheelRadius }) {
   const valve = builder.group(parent, 'Valve');
   builder.cylinder(valve, 'ValveBody', pipeRadius * 1.45, pipeRadius * 3, [0, pipeY, 0], builder.materials.paintedSteel, 'x');
-  const wheelTube = height * 0.015;
+  const wheelTube = Math.min(height * 0.015, wheelRadius * 0.1);
   const wheelY = height - wheelTube;
   builder.cylinder(valve, 'Stem', pipeRadius * 0.22, wheelY - pipeY, [0, (wheelY + pipeY) / 2, 0], builder.materials.steelLight);
   const handle = builder.group(valve, 'ValveHandle', [0, wheelY, 0]);

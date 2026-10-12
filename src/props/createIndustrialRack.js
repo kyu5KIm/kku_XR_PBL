@@ -19,7 +19,7 @@ export function createIndustrialRack(options = {}) {
     box(shelf, 'Deck', [w - post * 2, beamThickness * 0.3, d - post * 2], [0, y + beamThickness * 0.65, 0], materials.steelLight);
   }
   const holes = [];
-  for (const x of [-1, 1]) for (let index = 0; index < 18; index++) holes.push([x * (w - post) / 2, h * (0.06 + index * 0.05), d / 2 + post * 0.01]);
+  for (const x of [-1, 1]) for (let index = 0; index < 18; index++) holes.push([x * (w - post) / 2, h * (0.06 + index * 0.05), d / 2 - post * 0.01]);
   repeatedBoxes(frame, 'UprightSlots', [post * 0.2, h * 0.012, post * 0.02], holes, materials.steelDark);
   return root;
 }

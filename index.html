@@ -8,30 +8,33 @@
   <title>산업 소품 스튜디오</title>
 </head>
 <body>
-  <header><span class="brand-mark">IP</span><div><strong>산업 소품 스튜디오</strong><small>INDUSTRIAL PROPS / 001</small></div><span class="badge">미터 단위 · 절차적 모델</span></header>
+  <header><span class="brand-mark">IP</span><div><strong>산업 소품 스튜디오</strong><small>INDUSTRIAL PROPS / 012</small></div><span class="badge">미터 단위 · 절차적 모델</span></header>
   <main>
     <section class="viewport" aria-label="3D 모델 미리보기">
-      <div class="viewport-title"><span class="eyebrow">ASSET PREVIEW</span><h1>산업용 제어반</h1><p>기본 도형으로 구성한 재사용 가능한 설비 소품</p></div>
+      <div class="viewport-title"><span class="eyebrow">ASSET PREVIEW</span><h1>산업용 작업대</h1><p id="asset-description">기본 도형으로 구성한 재사용 가능한 설비 소품</p></div>
       <canvas id="scene" aria-label="마우스로 회전하고 확대할 수 있는 3D 장면"></canvas>
       <div class="viewport-footer"><span>드래그 회전 · 휠 확대 · 우클릭 이동</span><span>1 unit = 1 m</span></div>
     </section>
     <aside>
       <span class="eyebrow">MODEL SETTINGS</span><h2>모델 설정</h2>
-      <div class="asset-label"><span class="status-dot"></span> Electrical cabinet <span>001</span></div>
+      <label class="catalog-label" for="asset-select">제작 대상 <span>12종</span></label>
+      <select id="asset-select" aria-label="제작 대상 선택"></select>
+      <div class="asset-label"><span class="status-dot"></span><span id="asset-name"></span><span id="asset-number">001</span></div>
       <form id="model-form">
         <fieldset><legend>크기 <span>m</span></legend>
           <label for="width">너비<input id="width" name="width" type="number" min="0.4" max="2.4" step="0.05" value="1.2" required /></label>
           <label for="height">높이<input id="height" name="height" type="number" min="0.8" max="3" step="0.05" value="2" required /></label>
           <label for="depth">깊이<input id="depth" name="depth" type="number" min="0.2" max="1" step="0.05" value="0.4" required /></label>
         </fieldset>
+        <label id="count-setting" for="partCount" hidden><span id="count-label">부품 수</span><input id="partCount" name="partCount" type="number" step="1" required disabled /></label>
         <label class="color-label" for="bodyColor">도장 색상<input id="bodyColor" name="bodyColor" type="color" value="#657d75" /></label>
         <button class="primary" type="submit">모델에 적용 <span>↗</span></button>
       </form>
-      <div class="setting-section"><label for="door-angle">도어 개방 <output id="door-value" for="door-angle">0°</output></label><input id="door-angle" type="range" min="0" max="110" value="0" /><div class="range-label"><span>닫힘</span><span>열림</span></div></div>
+      <div id="motion-setting" class="setting-section" hidden><label for="motion-value"><span id="motion-label">조작</span><output id="motion-output" for="motion-value">0</output></label><input id="motion-value" type="range" min="0" max="110" value="0" /><div class="range-label"><span>기본 상태</span><span id="motion-end">110°</span></div></div>
       <div class="setting-section"><h3>시점</h3><div class="view-buttons" aria-label="모델 확인 시점">
         <button type="button" data-view="front">정면</button><button type="button" data-view="back">후면</button><button type="button" data-view="left">좌측</button><button type="button" data-view="right">우측</button><button type="button" data-view="top">상단</button><button type="button" data-view="perspective">사선</button>
       </div></div>
-      <div class="model-summary"><span class="eyebrow">ASSET DETAILS</span><p id="dimensions"></p><p>바닥 중심 원점 · 전면 +Z<br />상태등과 손잡이를 포함한 닫힘 치수<br />실습용 가정 치수 · 규격 인증 모델 아님</p></div>
+      <div class="model-summary"><span class="eyebrow">ASSET DETAILS</span><p id="dimensions"></p><p>바닥 중심 원점 · 전면 +Z<br />기본 상태의 전체 외곽 치수<br />실습용 가정 치수 · 규격 인증 모델 아님</p></div>
       <button id="export" class="secondary" type="button">GLB 다운로드 <span>↓</span></button>
       <button id="reset" class="text-button" type="button">기본 설정으로 복원</button>
       <p id="status" role="status" aria-live="polite"></p>
