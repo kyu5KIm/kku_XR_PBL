@@ -2,3 +2,25 @@ node_modules/
 dist/
 .DS_Store
 *.local
+
+# Unity caches, build output and personal settings
+/KKU_XR/[Ll]ibrary/
+/KKU_XR/[Tt]emp/
+/KKU_XR/[Oo]bj/
+/KKU_XR/[Ll]ogs/
+/KKU_XR/[Uu]ser[Ss]ettings/
+/KKU_XR/[Bb]uild/
+/KKU_XR/[Bb]uilds/
+/KKU_XR/[Mm]emoryCaptures/
+/KKU_XR/[Rr]ecordings/
+/KKU_XR/tmp/
+/KKU_XR/output/
+/KKU_XR/.vs/
+/KKU_XR/.vscode/
+/KKU_XR/*.csproj
+/KKU_XR/*.sln
+/KKU_XR/*.slnx
+/KKU_XR/*.user
+/KKU_XR/*.pidb
+/KKU_XR/*.unityproj
+/KKU_XR/*.log

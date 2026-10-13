@@ -1,0 +1,7 @@
+UNITY_VERSION=6000.6.4f1
+FACTORY_ASSETS_PASS | ProBuilderMeshes=373 | MissingMeshes=0 | MissingMaterials=0 | MissingScripts=0
+FACTORY_LAYOUT_PASS | Floor=36x24m | Conveyor=24m | AssemblyStations=6
+FIRST_PERSON_SETUP_PASS | Spawn=(18,0,2) | EyeHeight=1.65m | Cameras=1 | AudioListeners=1 | InputSystem=enabled
+FIRST_PERSON_MOVEMENT_PASS | Forward=4m/s | Diagonal=4m/s | MouseYaw=12deg | PitchLimit=85deg
+FIRST_PERSON_COLLISION_PASS | Floor=pass | WallStopX=0.33 | ConveyorStopZ=11.37
+FACTORY_VALIDATION_PASS

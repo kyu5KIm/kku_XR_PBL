@@ -1,0 +1,9 @@
+{
+  "source": "factory-layout-36x24.pdf",
+  "floorMeters": [36,24],
+  "conveyorLengthMeters": 24,
+  "assemblyStations": 6,
+  "proBuilderMeshes": 373,
+  "unitScales": true,
+  "serializedMeshValidation": true
+}
